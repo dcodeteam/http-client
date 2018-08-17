@@ -1,9 +1,11 @@
 # HttpClient
 
-[![npm version](https://img.shields.io/npm/v/@dc0de/http-client.svg?style=flat-square)](https://npmjs.com/@dc0de/http-client)
-[![npm downloads](https://img.shields.io/npm/dm/@dc0de/http-client.svg?style=flat-square)](https://npmjs.com/@dc0de/http-client)
+[![npm version](https://img.shields.io/npm/v/@dc0de/http-client.svg)](https://npmjs.com/@dc0de/http-client)
+[![npm minzipped size](https://img.shields.io/bundlephobia/minzip/@dc0de/http-client.svg)](https://npmjs.com/@dc0de/http-client)
+[![npm type definitions](https://img.shields.io/npm/types/@dc0de/http-client.svg)](https://npmjs.com/@dc0de/http-client)
+[![npm downloads](https://img.shields.io/npm/dm/@dc0de/http-client.svg)](https://npmjs.com/@dc0de/http-client)
 [![Build Status](https://travis-ci.com/dcodeteam/http-client.svg?branch=master)](https://travis-ci.com/dcodeteam/http-client)
-[![Codecov](https://img.shields.io/codecov/c/gh/dcodeteam/http-client.svg?style=flat-square)](https://codecov.io/gh/dcodeteam/http-client)
+[![codecov](https://codecov.io/gh/dcodeteam/http-client/branch/master/graph/badge.svg)](https://codecov.io/gh/dcodeteam/http-client)
 
 We love `axios`! It has simple api and consistently works in `web`, `node` and `react-native`.
 
