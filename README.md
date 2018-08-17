@@ -26,6 +26,8 @@ yarn add rxjs @dc0de/http-client
 
 #### Usage
 
+##### Initialization
+
 ```javascript
 import {
   HttpClient,
@@ -100,6 +102,27 @@ export function createHttpClient(logger, getToken, unauthorize) {
 
       return false;
     }
+  });
+}
+```
+
+##### Request
+
+```javascript
+const USER_URL = "/user/:userId";
+const USER_COMMENTS_URL = "/user/:userId/comments";
+
+export function fetchUser(httpClient, userId) {
+  return httpClient.get(USER_URL, {
+    pathParams: { userId }
+  });
+}
+
+export function fetchUserPosts(httpClient, userId, page, limit) {
+  return httpClient.get(USER_COMMENTS_URL, {
+    url: USER_URL,
+    pathParams: { userId },
+    queryParams: { page, limit }
   });
 }
 ```
