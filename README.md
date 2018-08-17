@@ -1,5 +1,10 @@
 # HttpClient
 
+[![npm version](https://img.shields.io/npm/v/@dc0de/http-client.svg?style=flat-square)](https://npmjs.com/@dc0de/http-client)
+[![npm downloads](https://img.shields.io/npm/dm/@dc0de/http-client.svg?style=flat-square)](https://npmjs.com/@dc0de/http-client)
+[![build status](https://img.shields.io/travis/dcodeteam/http-client/master.svg?style=flat-square)](https://travis-ci.org/dcodeteam/http-client)
+[![Codecov](https://img.shields.io/codecov/c/gh/dcodeteam/http-client.svg?style=flat-square)](https://codecov.io/gh/dcodeteam/http-client)
+
 We love `axios`! It has simple api and consistently works in `web`, `node` and `react-native`.
 
 Also we love to use it with `rxjs`, it helps to add simple retry functionality, control http pool and prevent unwanted memory leaks.
