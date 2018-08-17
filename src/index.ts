@@ -10,3 +10,8 @@ export {
 export { HttpClient, HttpClientOptions } from "./http-client/HttpClient";
 
 export { HttpStatus } from "./http-status/HttpStatus";
+
+export { HttpClientError } from "./interfaces/HttpClientError";
+export { HttpClientResponse } from "./interfaces/HttpClientResponse";
+export { HttpClientRequestConfig } from "./interfaces/HttpClientRequestConfig";
+export { HttpClientRequestMethod } from "./interfaces/HttpClientRequestMethod";
