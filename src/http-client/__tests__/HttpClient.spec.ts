@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 
 import { HttpClientRequestConfig } from "../../interfaces/HttpClientRequestConfig";
 import { HttpClientRequestMethod } from "../../interfaces/HttpClientRequestMethod";
+import { isHttpClientError } from "../..";
 import { HttpClient } from "../HttpClient";
 
 jest.mock("axios");
@@ -81,7 +82,7 @@ describe("HttpClient", () => {
 
     it("should call 'axios.request'", async () => {
       const client = new HttpClient();
-      const request = client.request<{ config: HttpClientRequestConfig }>({
+      const request = client.request({
         url: mockConfig.url,
         method: mockConfig.method
       });
@@ -251,7 +252,7 @@ describe("HttpClient", () => {
 
     it("should cancel request on observable close", () => {
       const client = new HttpClient();
-      const request = client.request<{ config: HttpClientRequestConfig }>({
+      const request = client.request({
         url: "cancel",
         method: mockConfig.method
       });
@@ -265,7 +266,43 @@ describe("HttpClient", () => {
 
       subscriber.unsubscribe();
 
-      expect(token.cancel.mock.calls).toMatchSnapshot();
+      expect(token.cancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("should throw HttpClientError on http errors", async () => {
+      const client = new HttpClient();
+      const request = client.request({
+        url: "error",
+        method: mockConfig.method
+      });
+
+      try {
+        await request.toPromise();
+      } catch (e) {
+        expect(e).toMatchSnapshot();
+        expect(isHttpClientError(e)).toBe(true);
+      }
+
+      expect.assertions(2);
+    });
+
+    it("should throw Error on sync errors", async () => {
+      const client = new HttpClient();
+      const request = client.request({
+        url: "/foo/:bar",
+        pathParams: {},
+        method: mockConfig.method
+      });
+
+      try {
+        await request.toPromise();
+      } catch (e) {
+        expect(e).toMatchSnapshot();
+        expect(e).toBeInstanceOf(Error);
+        expect(isHttpClientError(e)).toBe(false);
+      }
+
+      expect.assertions(3);
     });
 
     it("should call 'requestInterceptor' before request", async () => {
@@ -322,7 +359,7 @@ describe("HttpClient", () => {
       const errorInterceptor = jest.fn();
 
       const client = new HttpClient({ errorInterceptor });
-      const request = client.request<{ config: HttpClientRequestConfig }>({
+      const request = client.request({
         url: "error",
         method: mockConfig.method
       });
@@ -330,11 +367,12 @@ describe("HttpClient", () => {
       try {
         await request.toPromise();
       } catch (e) {
+        expect(e).toMatchSnapshot();
         expect(errorInterceptor).lastCalledWith(e);
         expect(errorInterceptor).toHaveBeenCalledTimes(1);
       }
 
-      expect.assertions(2);
+      expect.assertions(3);
     });
 
     it("should call 'shouldRetry' on errors", async () => {
@@ -349,8 +387,8 @@ describe("HttpClient", () => {
 
         await request.toPromise();
       } catch (e) {
+        expect(e).toMatchSnapshot();
         expect(shouldRetry).toHaveBeenCalledTimes(3);
-
         expect(shouldRetry.mock.calls).toEqual([
           [{ error: e, attempt: 1, config: e.config }],
           [{ error: e, attempt: 2, config: e.config }],
@@ -358,7 +396,7 @@ describe("HttpClient", () => {
         ]);
       }
 
-      expect.assertions(2);
+      expect.assertions(3);
     });
   });
 });

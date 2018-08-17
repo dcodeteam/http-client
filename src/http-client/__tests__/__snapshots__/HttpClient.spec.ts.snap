@@ -97,8 +97,10 @@ Object {
 }
 `;
 
-exports[`HttpClient HttpClient#request should cancel request on observable close 1`] = `
-Array [
-  Array [],
-]
-`;
+exports[`HttpClient HttpClient#request should call 'errorInterceptor' on errors 1`] = `[HttpClientError: Http Error]`;
+
+exports[`HttpClient HttpClient#request should call 'shouldRetry' on errors 1`] = `[HttpClientError: Http Error]`;
+
+exports[`HttpClient HttpClient#request should throw Error on sync errors 1`] = `[TypeError: Expected "bar" to be a string]`;
+
+exports[`HttpClient HttpClient#request should throw HttpClientError on http errors 1`] = `[HttpClientError: Http Error]`;
