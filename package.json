@@ -21,7 +21,8 @@
     "cover": "yarn test --no-watch --coverage",
     "build": "yarn build:es && yarn build:cjs",
     "build:es": "rollup -c ./config/rollup.es.js",
-    "build:cjs": "rollup -c ./config/rollup.cjs.js"
+    "build:cjs": "rollup -c ./config/rollup.cjs.js",
+    "codecov": "codecov -f ./coverage/lcov.info"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -38,6 +39,7 @@
     "@dc0de/js-scripts": "^0.1.12",
     "@types/jest": "^23.3.1",
     "babel-preset-env": "^1.7.0",
+    "codecov": "^3.0.4",
     "eslint": "^5.3.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.0.1",
