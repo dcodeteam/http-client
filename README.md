@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@dc0de/http-client.svg?style=flat-square)](https://npmjs.com/@dc0de/http-client)
 [![npm downloads](https://img.shields.io/npm/dm/@dc0de/http-client.svg?style=flat-square)](https://npmjs.com/@dc0de/http-client)
-[![build status](https://img.shields.io/travis/dcodeteam/http-client/master.svg?style=flat-square)](https://travis-ci.org/dcodeteam/http-client)
+[![Build Status](https://travis-ci.com/dcodeteam/http-client.svg?branch=master)](https://travis-ci.com/dcodeteam/http-client)
 [![Codecov](https://img.shields.io/codecov/c/gh/dcodeteam/http-client.svg?style=flat-square)](https://codecov.io/gh/dcodeteam/http-client)
 
 We love `axios`! It has simple api and consistently works in `web`, `node` and `react-native`.
