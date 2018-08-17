@@ -3,7 +3,7 @@
   "license": "MIT",
   "version": "0.0.1",
   "name": "@dc0de/http-client",
-  "description": "Javascript HTTP Client built on top of axios and rxjs",
+  "description": "Simple HttpClient built on top of Axios and RxJS",
   "main": "cjs/index.js",
   "module": "es/index.js",
   "typings": "typings/index.d.ts",
