@@ -1,0 +1,8 @@
+{
+  // Use base config.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Compile with latest features.
+    "target": "esnext"
+  }
+}

@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HttpClient HttpClient#delete should call HttpClient#request 1`] = `
+Array [
+  Object {
+    "headers": Object {
+      "foo": "bar",
+    },
+    "method": "DELETE",
+    "pathParams": Object {
+      "bar": "baz",
+    },
+    "queryParams": Object {
+      "foo": "bar",
+    },
+    "timeout": 1000,
+    "url": "/foo/:bar",
+  },
+]
+`;
+
+exports[`HttpClient HttpClient#get should call HttpClient#request 1`] = `
+Array [
+  Object {
+    "headers": Object {
+      "foo": "bar",
+    },
+    "method": "GET",
+    "pathParams": Object {
+      "bar": "baz",
+    },
+    "queryParams": Object {
+      "foo": "bar",
+    },
+    "timeout": 1000,
+    "url": "/foo/:bar",
+  },
+]
+`;
+
+exports[`HttpClient HttpClient#post should call HttpClient#request 1`] = `
+Array [
+  Object {
+    "data": Object {
+      "foo": "bar",
+    },
+    "headers": Object {
+      "foo": "bar",
+    },
+    "method": "POST",
+    "pathParams": Object {
+      "bar": "baz",
+    },
+    "queryParams": Object {
+      "foo": "bar",
+    },
+    "timeout": 1000,
+    "url": "/foo/:bar",
+  },
+]
+`;
+
+exports[`HttpClient HttpClient#put should call HttpClient#request 1`] = `
+Array [
+  Object {
+    "data": Object {
+      "foo": "bar",
+    },
+    "headers": Object {
+      "foo": "bar",
+    },
+    "method": "PUT",
+    "pathParams": Object {
+      "bar": "baz",
+    },
+    "queryParams": Object {
+      "foo": "bar",
+    },
+    "timeout": 1000,
+    "url": "/foo/:bar",
+  },
+]
+`;
+
+exports[`HttpClient HttpClient#request should call 'axios.request' 1`] = `
+Object {
+  "data": Object {
+    "cancelToken": Object {},
+    "data": undefined,
+    "headers": Object {},
+    "method": "GET",
+    "params": Object {},
+    "url": "/foo/:bar",
+  },
+  "headers": undefined,
+  "status": undefined,
+}
+`;
+
+exports[`HttpClient HttpClient#request should cancel request on observable close 1`] = `
+Array [
+  Array [],
+]
+`;
