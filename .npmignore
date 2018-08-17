@@ -1,5 +1,5 @@
 *
 
-!/es/*
-!/cjs/*
-!/typings/*
+!/es/**
+!/cjs/**
+!/typings/**
