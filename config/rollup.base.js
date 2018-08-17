@@ -15,8 +15,9 @@ module.exports = function createRollupConfig({ target }) {
     },
     external(id) {
       switch (id) {
+        case "axios":
         case "tslib":
-        case "immupdate":
+        case "path-to-regexp":
           return true;
         default:
           return id.startsWith("rxjs");
