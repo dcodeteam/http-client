@@ -9,6 +9,10 @@
   "typings": "typings/index.d.ts",
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",
   "repository": "https://github.com/dcodeteam/http-client.git",
+  "keywords": [
+    "rxjs",
+    "axios"
+  ],
   "engines": {
     "node": ">=8.0.0"
   },
