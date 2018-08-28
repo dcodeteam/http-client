@@ -1,14 +1,19 @@
 import { HttpClientRequestMethod } from "./HttpClientRequestMethod";
 
+type FlatObject = { [key: string]: null | number | string | undefined };
+
 export interface HttpClientRequestConfig {
   readonly method: HttpClientRequestMethod;
 
   readonly url: string;
-  readonly pathParams?: object;
-  readonly queryParams?: object;
+
+  readonly pathParams?: FlatObject;
+
+  readonly queryParams?: FlatObject;
 
   readonly data?: object;
-  readonly headers?: object;
+
+  readonly headers?: FlatObject;
 
   readonly timeout?: number;
 }
