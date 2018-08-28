@@ -1,1 +1,6 @@
-export type HttpClientRequestMethod = "GET" | "POST" | "PUT" | "DELETE";
+export type HttpClientRequestMethod =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "PATCH"
+  | "DELETE";

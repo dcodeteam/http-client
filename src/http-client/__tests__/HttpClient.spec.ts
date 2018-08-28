@@ -26,6 +26,7 @@ describe("HttpClient", () => {
     "GET",
     "POST",
     "PUT",
+    "PATCH",
     "DELETE"
   ];
 

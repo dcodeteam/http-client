@@ -66,6 +66,13 @@ export class HttpClient {
     return this.request<T>({ ...options, url, method: "PUT" });
   }
 
+  public patch<T>(
+    url: string,
+    options?: Omit<HttpClientRequestConfig, "url" | "method">
+  ) {
+    return this.request<T>({ ...options, url, method: "PATCH" });
+  }
+
   public delete<T>(
     url: string,
     options?: Omit<HttpClientRequestConfig, "url" | "data" | "method">

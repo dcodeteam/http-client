@@ -38,6 +38,25 @@ Array [
 ]
 `;
 
+exports[`HttpClient HttpClient#patch should call HttpClient#request 1`] = `
+Array [
+  Object {
+    "headers": Object {
+      "foo": "bar",
+    },
+    "method": "PATCH",
+    "pathParams": Object {
+      "bar": "baz",
+    },
+    "queryParams": Object {
+      "foo": "bar",
+    },
+    "timeout": 1000,
+    "url": "/foo/:bar",
+  },
+]
+`;
+
 exports[`HttpClient HttpClient#post should call HttpClient#request 1`] = `
 Array [
   Object {
