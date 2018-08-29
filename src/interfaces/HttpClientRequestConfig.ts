@@ -1,19 +1,20 @@
 import { HttpClientRequestMethod } from "./HttpClientRequestMethod";
 
-type FlatObject = { [key: string]: null | number | string | undefined };
+// eslint-disable-next-line typescript/no-explicit-any
+type AnyObject = { [key: string]: any };
 
 export interface HttpClientRequestConfig {
   readonly method: HttpClientRequestMethod;
 
   readonly url: string;
 
-  readonly pathParams?: FlatObject;
+  readonly pathParams?: AnyObject;
 
-  readonly queryParams?: FlatObject;
+  readonly queryParams?: AnyObject;
 
   readonly data?: object;
 
-  readonly headers?: FlatObject;
+  readonly headers?: AnyObject;
 
   readonly timeout?: number;
 }
