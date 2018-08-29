@@ -1,7 +1,7 @@
 {
   "private": false,
   "license": "MIT",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "name": "@dc0de/http-client",
   "description": "Simple HttpClient built on top of Axios and RxJS",
   "main": "cjs/index.js",
