@@ -41,7 +41,7 @@ export type HttpClientGetRequestConfig = Pick<
 
 export type HttpClientPostRequestConfig = Pick<
   HttpClientRequestConfig,
-  "pathParams" | "queryParams" | "headers" | "timeout"
+  "data" | "pathParams" | "queryParams" | "headers" | "timeout"
 >;
 
 export type HttpClientPutRequestConfig = HttpClientPostRequestConfig;

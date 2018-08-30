@@ -30,38 +30,6 @@ describe("HttpClient", () => {
     "DELETE"
   ];
 
-  httpMethods.forEach(x => {
-    const method = x.toLowerCase();
-
-    describe(`HttpClient#${method}`, () => {
-      it("should call HttpClient#request", () => {
-        const client = new HttpClient();
-
-        jest.spyOn(client, "request");
-
-        const options: Partial<HttpClientRequestConfig> = {
-          timeout: mockConfig.timeout,
-          headers: mockConfig.headers,
-          pathParams: mockConfig.pathParams,
-          queryParams: mockConfig.queryParams
-        };
-
-        if (x === "POST" || x === "PUT") {
-          Object.assign(options, { data: mockConfig.data });
-        }
-
-        // @ts-ignore
-        expect(client[method](mockConfig.url, options)).toBeInstanceOf(
-          Observable
-        );
-
-        // @ts-ignore
-        expect(client.request.mock.calls[0]).toMatchSnapshot();
-        expect(client.request).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
   describe("HttpClient#request", () => {
     it("should return observable", () => {
       const client = new HttpClient();
@@ -398,6 +366,70 @@ describe("HttpClient", () => {
       }
 
       expect.assertions(3);
+    });
+  });
+
+  httpMethods.forEach(x => {
+    const method = x.toLowerCase();
+
+    describe(`HttpClient#${method}`, () => {
+      it("should call HttpClient#request", () => {
+        const client = new HttpClient();
+
+        jest.spyOn(client, "request");
+
+        if (x === "GET") {
+          expect(
+            client.get(mockConfig.url, {
+              timeout: mockConfig.timeout,
+              headers: mockConfig.headers,
+              pathParams: mockConfig.pathParams,
+              queryParams: mockConfig.queryParams
+            })
+          ).toBeInstanceOf(Observable);
+        } else if (x === "POST") {
+          expect(
+            client.post(mockConfig.url, {
+              data: mockConfig.data,
+              timeout: mockConfig.timeout,
+              headers: mockConfig.headers,
+              pathParams: mockConfig.pathParams,
+              queryParams: mockConfig.queryParams
+            })
+          ).toBeInstanceOf(Observable);
+        } else if (x === "PUT") {
+          expect(
+            client.put(mockConfig.url, {
+              data: mockConfig.data,
+              timeout: mockConfig.timeout,
+              headers: mockConfig.headers,
+              pathParams: mockConfig.pathParams,
+              queryParams: mockConfig.queryParams
+            })
+          ).toBeInstanceOf(Observable);
+        } else if (x === "PATCH") {
+          expect(
+            client.patch(mockConfig.url, {
+              data: mockConfig.data,
+              timeout: mockConfig.timeout,
+              headers: mockConfig.headers,
+              pathParams: mockConfig.pathParams,
+              queryParams: mockConfig.queryParams
+            })
+          ).toBeInstanceOf(Observable);
+        } else if (x === "DELETE") {
+          expect(
+            client.delete(mockConfig.url, {
+              timeout: mockConfig.timeout,
+              headers: mockConfig.headers,
+              pathParams: mockConfig.pathParams,
+              queryParams: mockConfig.queryParams
+            })
+          ).toBeInstanceOf(Observable);
+        }
+
+        expect(client.request).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });
