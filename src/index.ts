@@ -7,7 +7,15 @@ export {
   HTTP_ERROR_TIMEOUT_CODE
 } from "./utils/HttpErrorUtils";
 
-export { HttpClient, HttpClientOptions } from "./http-client/HttpClient";
+export {
+  HttpClient,
+  HttpClientOptions,
+  HttpClientGetRequestConfig,
+  HttpClientPostRequestConfig,
+  HttpClientPutRequestConfig,
+  HttpClientPatchRequestConfig,
+  HttpClientDeleteRequestConfig
+} from "./http-client/HttpClient";
 
 export { HttpStatus } from "./http-status/HttpStatus";
 

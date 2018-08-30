@@ -4,8 +4,13 @@ exports[`index public api 1`] = `
 Object {
   "HTTP_ERROR_TIMEOUT_CODE": "ECONNABORTED",
   "HttpClient": [Function],
+  "HttpClientDeleteRequestConfig": undefined,
   "HttpClientError": undefined,
+  "HttpClientGetRequestConfig": undefined,
   "HttpClientOptions": undefined,
+  "HttpClientPatchRequestConfig": undefined,
+  "HttpClientPostRequestConfig": undefined,
+  "HttpClientPutRequestConfig": undefined,
   "HttpClientRequestConfig": undefined,
   "HttpClientRequestMethod": undefined,
   "HttpClientResponse": undefined,

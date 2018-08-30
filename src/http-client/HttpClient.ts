@@ -12,7 +12,6 @@ import { HttpClientRequestConfig } from "../interfaces/HttpClientRequestConfig";
 import { HttpClientResponse } from "../interfaces/HttpClientResponse";
 import { generatePath } from "../utils/GeneratePath";
 import { createHttpClientError } from "../utils/HttpErrorUtils";
-import { Omit } from "../utils/types";
 
 function isAxiosError(error: Error): error is AxiosError {
   return "config" in error;
@@ -35,6 +34,21 @@ export interface HttpClientOptions {
   ) => void;
 }
 
+export type HttpClientGetRequestConfig = Pick<
+  HttpClientRequestConfig,
+  "pathParams" | "queryParams" | "headers" | "timeout"
+>;
+
+export type HttpClientPostRequestConfig = Pick<
+  HttpClientRequestConfig,
+  "pathParams" | "queryParams" | "headers" | "timeout"
+>;
+
+export type HttpClientPutRequestConfig = HttpClientPostRequestConfig;
+export type HttpClientPatchRequestConfig = HttpClientPostRequestConfig;
+
+export type HttpClientDeleteRequestConfig = HttpClientGetRequestConfig;
+
 export class HttpClient {
   private readonly client: AxiosInstance;
 
@@ -45,38 +59,23 @@ export class HttpClient {
     this.client = axios.create();
   }
 
-  public get<T>(
-    url: string,
-    options?: Omit<HttpClientRequestConfig, "url" | "data" | "method">
-  ) {
+  public get<T>(url: string, options?: HttpClientGetRequestConfig) {
     return this.request<T>({ ...options, url, method: "GET" });
   }
 
-  public post<T>(
-    url: string,
-    options?: Omit<HttpClientRequestConfig, "url" | "method">
-  ) {
+  public post<T>(url: string, options?: HttpClientPostRequestConfig) {
     return this.request<T>({ ...options, url, method: "POST" });
   }
 
-  public put<T>(
-    url: string,
-    options?: Omit<HttpClientRequestConfig, "url" | "method">
-  ) {
+  public put<T>(url: string, options?: HttpClientPutRequestConfig) {
     return this.request<T>({ ...options, url, method: "PUT" });
   }
 
-  public patch<T>(
-    url: string,
-    options?: Omit<HttpClientRequestConfig, "url" | "method">
-  ) {
+  public patch<T>(url: string, options?: HttpClientPatchRequestConfig) {
     return this.request<T>({ ...options, url, method: "PATCH" });
   }
 
-  public delete<T>(
-    url: string,
-    options?: Omit<HttpClientRequestConfig, "url" | "data" | "method">
-  ) {
+  public delete<T>(url: string, options?: HttpClientDeleteRequestConfig) {
     return this.request<T>({ ...options, url, method: "DELETE" });
   }
 

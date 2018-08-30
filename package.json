@@ -17,7 +17,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "all": "yarn lint --fix && yarn dts && yarn cover && yarn build",
+    "all": "yarn lint --fix && yarn dts && yarn cover -u && yarn build",
     "ci": "yarn lint && yarn dts && yarn cover --ci && yarn build",
     "dts": "tsc --noEmit",
     "lint": "js-scripts lint",
