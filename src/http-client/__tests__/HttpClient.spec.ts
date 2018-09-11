@@ -40,16 +40,22 @@ describe("HttpClient", () => {
     });
 
     it("should create new instance of axios client", () => {
-      // @ts-ignore
-      const before = axios.instances.length;
+      const spy = jest.spyOn(axios, "create");
+
+      expect(spy).toHaveBeenCalledTimes(0);
 
       expect(() => new HttpClient()).not.toThrow();
 
-      // @ts-ignore
-      expect(axios.instances.length).toBe(before + 1);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it("should call 'axios.request'", async () => {
+      const instance = axios.create();
+
+      jest.spyOn(axios, "create").mockImplementationOnce(() => instance);
+
+      const spy = jest.spyOn(instance, "request");
+
       const client = new HttpClient();
       const request = client.request({
         url: mockConfig.url,
@@ -58,8 +64,7 @@ describe("HttpClient", () => {
 
       await expect(request.toPromise()).resolves.toMatchSnapshot();
 
-      // @ts-ignore
-      expect(axios.instances.pop().request).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it("should accept 'method'", async () => {
@@ -220,6 +225,13 @@ describe("HttpClient", () => {
     });
 
     it("should cancel request on observable close", () => {
+      const token = axios.CancelToken.source();
+      const spy = jest.spyOn(token, "cancel");
+
+      jest
+        .spyOn(axios.CancelToken, "source")
+        .mockImplementationOnce(() => token);
+
       const client = new HttpClient();
       const request = client.request({
         url: "cancel",
@@ -228,14 +240,13 @@ describe("HttpClient", () => {
 
       const subscriber = request.subscribe();
 
-      // @ts-ignore
-      const token = axios.CancelTokens.pop();
-
-      expect(token.cancel).toHaveBeenCalledTimes(0);
+      expect(spy).toHaveBeenCalledTimes(0);
 
       subscriber.unsubscribe();
 
-      expect(token.cancel).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      spy.mockRestore();
     });
 
     it("should throw HttpClientError on http errors", async () => {
@@ -375,8 +386,7 @@ describe("HttpClient", () => {
     describe(`HttpClient#${method}`, () => {
       it("should call HttpClient#request", () => {
         const client = new HttpClient();
-
-        jest.spyOn(client, "request");
+        const spy = jest.spyOn(client, "request");
 
         if (x === "GET") {
           expect(
@@ -428,7 +438,7 @@ describe("HttpClient", () => {
           ).toBeInstanceOf(Observable);
         }
 
-        expect(client.request).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
     });
   });

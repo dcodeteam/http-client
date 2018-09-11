@@ -8,7 +8,11 @@ import { Observable, defer, throwError } from "rxjs";
 import { catchError, map, retryWhen } from "rxjs/operators";
 
 import { HttpClientError } from "../interfaces/HttpClientError";
-import { HttpClientRequestConfig } from "../interfaces/HttpClientRequestConfig";
+import {
+  HttpClientFetchRequestConfig,
+  HttpClientRequestConfig,
+  HttpClientUpdateRequestConfig
+} from "../interfaces/HttpClientRequestConfig";
 import { HttpClientResponse } from "../interfaces/HttpClientResponse";
 import { generatePath } from "../utils/GeneratePath";
 import { createHttpClientError } from "../utils/HttpErrorUtils";
@@ -34,21 +38,47 @@ export interface HttpClientOptions {
   ) => void;
 }
 
-export type HttpClientGetRequestConfig = Pick<
-  HttpClientRequestConfig,
-  "pathParams" | "queryParams" | "headers" | "timeout"
->;
+/**
+##### Initialization
 
-export type HttpClientPostRequestConfig = Pick<
-  HttpClientRequestConfig,
-  "data" | "pathParams" | "queryParams" | "headers" | "timeout"
->;
+```javascript
+export function createHttpClient(logger) {
+  return new HttpClient({
+    requestInterceptor(config) {
+      logger.logRequest(config);
+    },
+ *
+    responseInterceptor(config, response) {
+      logger.logResponse(config, response);
+    },
+ *
+    errorInterceptor(error) {
+      logger.logError(error);
+    },
+  });
+}
+```
 
-export type HttpClientPutRequestConfig = HttpClientPostRequestConfig;
-export type HttpClientPatchRequestConfig = HttpClientPostRequestConfig;
+##### Request
+```javascript
+const USER_URL = "/user/:userId";
+const USER_COMMENTS_URL = "/user/:userId/comments";
 
-export type HttpClientDeleteRequestConfig = HttpClientGetRequestConfig;
+export function fetchUser(httpClient, userId) {
+  return httpClient.get(USER_URL, {
+    pathParams: { userId }
+  });
+}
 
+export function fetchUserPosts(httpClient, userId, page, limit) {
+  return httpClient.get(USER_COMMENTS_URL, {
+    url: USER_URL,
+    pathParams: { userId },
+    queryParams: { page, limit }
+  });
+}
+```
+ */
 export class HttpClient {
   private readonly client: AxiosInstance;
 
@@ -59,23 +89,38 @@ export class HttpClient {
     this.client = axios.create();
   }
 
-  public get<T>(url: string, options?: HttpClientGetRequestConfig) {
+  public get<T>(
+    url: string,
+    options?: HttpClientFetchRequestConfig
+  ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "GET" });
   }
 
-  public post<T>(url: string, options?: HttpClientPostRequestConfig) {
+  public post<T>(
+    url: string,
+    options?: HttpClientUpdateRequestConfig
+  ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "POST" });
   }
 
-  public put<T>(url: string, options?: HttpClientPutRequestConfig) {
+  public put<T>(
+    url: string,
+    options?: HttpClientUpdateRequestConfig
+  ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "PUT" });
   }
 
-  public patch<T>(url: string, options?: HttpClientPatchRequestConfig) {
+  public patch<T>(
+    url: string,
+    options?: HttpClientUpdateRequestConfig
+  ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "PATCH" });
   }
 
-  public delete<T>(url: string, options?: HttpClientDeleteRequestConfig) {
+  public delete<T>(
+    url: string,
+    options?: HttpClientFetchRequestConfig
+  ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "DELETE" });
   }
 
