@@ -1,11 +1,6 @@
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse
-} from "axios";
-import { Observable, defer, throwError } from "rxjs";
-import { catchError, map, retryWhen } from "rxjs/operators";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { Observable } from "rxjs";
+import { retryWhen, scan, shareReplay } from "rxjs/operators";
 
 import { HttpClientError } from "../interfaces/HttpClientError";
 import {
@@ -127,64 +122,40 @@ export class HttpClient {
   public request<T>(
     options: HttpClientRequestConfig
   ): Observable<HttpClientResponse<T>> {
-    return defer(() => {
-      const cancelTokenSource = axios.CancelToken.source();
+    const {
+      shouldRetry,
+      errorInterceptor,
+      requestInterceptor,
+      responseInterceptor
+    } = this.options;
 
-      const {
-        shouldRetry,
-        errorInterceptor,
-        requestInterceptor,
-        responseInterceptor
-      } = this.options;
+    const stream = new Observable<HttpClientResponse<T>>(subscriber => {
+      const cancelTokenSource = axios.CancelToken.source();
 
       if (requestInterceptor) {
         requestInterceptor(options);
       }
 
-      let stream = new Observable<AxiosResponse<T>>(subscriber => {
-        let complete = false;
-        const config: AxiosRequestConfig = {
-          method: options.method,
+      const config: AxiosRequestConfig = {
+        method: options.method,
+        url: generatePath(options.url, options.pathParams),
+        params: { ...options.queryParams },
+        data: options.data,
+        headers: { ...options.headers },
+        timeout: options.timeout,
+        cancelToken: cancelTokenSource.token
+      };
 
-          url: generatePath(options.url, options.pathParams),
-          params: { ...options.queryParams },
+      // Fix for react-native in Android devices.
+      if (config.timeout == null || !isFinite(config.timeout)) {
+        delete config.timeout;
+      }
 
-          data: options.data,
+      let complete = false;
 
-          headers: { ...options.headers },
-
-          timeout: options.timeout,
-
-          cancelToken: cancelTokenSource.token
-        };
-
-        // Fix for react-native in Android devices.
-        if (config.timeout == null || !isFinite(config.timeout)) {
-          delete config.timeout;
-        }
-
-        this.client
-          .request<T>(config)
-          .then(response => {
-            subscriber.next(response);
-          })
-          .catch(error => {
-            if (!axios.isCancel(error)) {
-              subscriber.error(error);
-            }
-          })
-          .then(() => {
-            complete = true;
-            subscriber.complete();
-          });
-
-        return () => {
-          if (!complete) {
-            cancelTokenSource.cancel();
-          }
-        };
-      }).pipe(
-        map(x => {
+      this.client
+        .request<T>(config)
+        .then(x => {
           const response: HttpClientResponse<T> = {
             data: x.data,
             status: x.status,
@@ -195,10 +166,13 @@ export class HttpClient {
             responseInterceptor(options, response);
           }
 
-          return response;
-        }),
+          subscriber.next(response);
+        })
+        .catch(x => {
+          if (axios.isCancel(x)) {
+            return;
+          }
 
-        catchError((x: Error | AxiosError) => {
           const error = !isAxiosError(x)
             ? x
             : createHttpClientError({
@@ -212,27 +186,35 @@ export class HttpClient {
             errorInterceptor(error);
           }
 
-          return throwError(error);
+          subscriber.error(error);
         })
-      );
+        .then(() => {
+          complete = true;
+          subscriber.complete();
+        });
 
-      if (shouldRetry) {
-        stream = stream.pipe(
+      return () => {
+        if (!complete) {
+          cancelTokenSource.cancel();
+        }
+      };
+    });
+
+    return !shouldRetry
+      ? stream
+      : stream.pipe(
+          shareReplay(),
           retryWhen(errors =>
             errors.pipe(
-              map((error, i) => {
-                if (!shouldRetry({ error, config: options, attempt: i + 1 })) {
-                  throw error;
+              scan<Error, number>((attempt, error) => {
+                if (shouldRetry({ error, config: options, attempt })) {
+                  return attempt + 1;
                 }
 
-                return i;
-              })
+                throw error;
+              }, 1)
             )
           )
         );
-      }
-
-      return stream;
-    });
   }
 }
