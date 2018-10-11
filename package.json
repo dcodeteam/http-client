@@ -4,9 +4,16 @@
   "version": "0.0.10",
   "name": "@dc0de/http-client",
   "description": "Simple HttpClient built on top of Axios and RxJS",
-  "main": "cjs/index.js",
-  "module": "es/index.js",
+  "main": "http-client.cjs.js",
+  "module": "http-client.es.js",
+  "es2015": "http-client.es2015.js",
   "typings": "typings/index.d.ts",
+  "files": [
+    "typings/**",
+    "http-client.es.js",
+    "http-client.cjs.js",
+    "http-client.es2015.js"
+  ],
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",
   "repository": "https://github.com/dcodeteam/http-client.git",
   "keywords": [
@@ -23,9 +30,11 @@
     "lint": "js-scripts lint",
     "test": "jest --watch",
     "cover": "jest --coverage",
-    "build": "yarn build:es && yarn build:cjs",
+    "build": "yarn build:es && yarn build:cjs && yarn build:es2015 && yarn build:typings",
     "build:es": "rollup -c ./config/rollup.es.js",
     "build:cjs": "rollup -c ./config/rollup.cjs.js",
+    "build:es2015": "rollup -c ./config/rollup.es2015.js",
+    "build:typings": "rimraf typings && tsc --project tsconfig.typings.json",
     "codecov": "codecov -f ./coverage/lcov.info"
   },
   "dependencies": {
@@ -55,6 +64,7 @@
     "eslint-plugin-typescript": "^0.12.0",
     "jest": "^23.6.0",
     "prettier": "^1.14.3",
+    "rimraf": "^2.6.2",
     "rollup": "^0.66.6",
     "rollup-plugin-cleaner": "^0.2.0",
     "rollup-plugin-prettier": "^0.4.0",

@@ -1,8 +1,8 @@
 # Distribution
 
-/es
-/cjs
-/typings
+/http-client.es.js
+/http-client.cjs.js
+/http-client.es2015.js
 
 # Logs
 logs
