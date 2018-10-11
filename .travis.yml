@@ -6,8 +6,8 @@ notifications:
   email: false
 
 node_js:
-  - 8
-  - 10
+  - "8"
+  - "10"
 
 install:
   - yarn
@@ -18,21 +18,27 @@ before_script:
 script:
   - yarn build
 
-after_success:
-  - if [[ $TRAVIS_NODE_VERSION == "8" ]]; then yarn codecov; fi
-
 branches:
   except:
     - "/^v\\d+\\.\\d+\\.\\d+$/"
 
 deploy:
-  provider: npm
-  skip_cleanup: true
-  email: uma.karimov@gmail.com
-  api_key:
-    secure: kicO1EN4JIBH79+W/zBqS25a/vGECTwivJI0CEVxXSTtyzX1HyTw2MloOMGqW+CYXJRmWeguWGDIfk4r9mMrH+EqMLau7JnQZl8UG/Lte2WzBobsY/bq64+03UmguApn8iC7g9cZL8FuSukTkWBK6zx9YEbujW2WbEIFwRIIsgGX1edp3MVQpvSxOEU1spXhAFKHpAiRslODf/aBNs4Se7T2hGhRvdDLqxjiwY4HsuJwQ0cSsMxnehYn6DGcvSq7R7SmSoIC7klsxszUGr8dtdDviVLbsaWEYlWIB0jmC7j0+am6/f5cSHtEfB+E+kXBRjU9US4CCpPoSQwN5MJhn5OwKAOFTZsNXnXkJzp25+1AFijAV/XVI1R6ncUIa2UISH+HaeYNv2LPd8u75K4YP06VNvqmFBzVOHAiALTqsXfgkFMwgqeIFRipaeOn5Th80U4m2mcH2iDFso6OI+iRDB0sxeZ1DcDDH6nJ9mIb75yCrRT7wBNARdeXDc11q51tQ3eLsQtY7QW5HOz1sESgK0B7R2F+pXDb5UkqdA3FnqxKPU1U1atLDnxudmNAYxaQq4urxK3FJU+FcPk/QooY1BLeAcup0aHXxqeZr+Cp03v07sN+Dhx+kRHHCEeBS2GQ5lqdYWx1p8sElGbe8g5NxpIbIpC7z/HAW5qSTBCZZb0=
-  on:
-    tags: true
-    branch: master
-    repo: dcodeteam/http-client
-    condition: "$TRAVIS_NODE_VERSION = 8"
+  - provider: script
+    skip_cleanup: true
+    script: yarn codecov
+    on:
+      tags: false
+      node_js: "8"
+      branch: master
+      repo: dcodeteam/react-google-maps
+
+  - provider: npm
+    skip_cleanup: true
+    email: uma.karimov@gmail.com
+    api_key:
+      secure: kicO1EN4JIBH79+W/zBqS25a/vGECTwivJI0CEVxXSTtyzX1HyTw2MloOMGqW+CYXJRmWeguWGDIfk4r9mMrH+EqMLau7JnQZl8UG/Lte2WzBobsY/bq64+03UmguApn8iC7g9cZL8FuSukTkWBK6zx9YEbujW2WbEIFwRIIsgGX1edp3MVQpvSxOEU1spXhAFKHpAiRslODf/aBNs4Se7T2hGhRvdDLqxjiwY4HsuJwQ0cSsMxnehYn6DGcvSq7R7SmSoIC7klsxszUGr8dtdDviVLbsaWEYlWIB0jmC7j0+am6/f5cSHtEfB+E+kXBRjU9US4CCpPoSQwN5MJhn5OwKAOFTZsNXnXkJzp25+1AFijAV/XVI1R6ncUIa2UISH+HaeYNv2LPd8u75K4YP06VNvqmFBzVOHAiALTqsXfgkFMwgqeIFRipaeOn5Th80U4m2mcH2iDFso6OI+iRDB0sxeZ1DcDDH6nJ9mIb75yCrRT7wBNARdeXDc11q51tQ3eLsQtY7QW5HOz1sESgK0B7R2F+pXDb5UkqdA3FnqxKPU1U1atLDnxudmNAYxaQq4urxK3FJU+FcPk/QooY1BLeAcup0aHXxqeZr+Cp03v07sN+Dhx+kRHHCEeBS2GQ5lqdYWx1p8sElGbe8g5NxpIbIpC7z/HAW5qSTBCZZb0=
+    on:
+      tags: true
+      node_js: "8"
+      branch: master
+      repo: dcodeteam/http-client
