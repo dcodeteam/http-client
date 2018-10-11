@@ -6,9 +6,8 @@ notifications:
   email: false
 
 node_js:
-  - 10
-  - 9
   - 8
+  - 10
 
 install:
   - yarn
