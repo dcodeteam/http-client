@@ -28,7 +28,7 @@ export interface HttpClientOptions {
       error: Error | HttpClientError;
       config: HttpClientRequestConfig;
     }
-  ) => void;
+  ) => boolean;
 
   readonly errorInterceptor?: (error: Error | HttpClientError) => void;
   readonly requestInterceptor?: (config: HttpClientRequestConfig) => void;

@@ -1,13 +1,6 @@
 "use strict";
 
 module.exports = {
-  globals: {
-    "ts-jest": {
-      useBabelrc: true,
-      tsConfigFile: "tsconfig.test.json"
-    }
-  },
-
   testEnvironment: "node",
   setupFiles: ["<rootDir>/config/jest.js"],
   transform: {

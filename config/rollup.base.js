@@ -8,11 +8,7 @@ const typescript = require("rollup-plugin-typescript2");
 module.exports = function createRollupConfig({ target }) {
   return {
     input: "./src/index.ts",
-    output: {
-      sourcemap: true,
-      format: target,
-      file: `./${target}/index.js`
-    },
+    output: { format: target, file: `./${target}/index.js` },
     external(id) {
       switch (id) {
         case "axios":
