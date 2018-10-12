@@ -34,45 +34,46 @@ export interface HttpClientOptions {
 }
 
 /**
-##### Initialization
-
-```javascript
-export function createHttpClient(logger) {
-  return new HttpClient({
-    requestInterceptor(config) {
-      logger.logRequest(config);
-    },
+ * ##### Initialization
  *
-    responseInterceptor(config, response) {
-      logger.logResponse(config, response);
-    },
+ * ```javascript
+ * export function createHttpClient(logger) {
+ *   return new HttpClient({
+ *     requestInterceptor(config) {
+ *       logger.logRequest(config);
+ *     },
  *
-    errorInterceptor(error) {
-      logger.logError(error);
-    },
-  });
-}
-```
-
-##### Request
-```javascript
-const USER_URL = "/user/:userId";
-const USER_COMMENTS_URL = "/user/:userId/comments";
-
-export function fetchUser(httpClient, userId) {
-  return httpClient.get(USER_URL, {
-    pathParams: { userId }
-  });
-}
-
-export function fetchUserPosts(httpClient, userId, page, limit) {
-  return httpClient.get(USER_COMMENTS_URL, {
-    url: USER_URL,
-    pathParams: { userId },
-    queryParams: { page, limit }
-  });
-}
-```
+ *     responseInterceptor(config, response) {
+ *       logger.logResponse(config, response);
+ *     },
+ *
+ *     errorInterceptor(error) {
+ *       logger.logError(error);
+ *     },
+ *   });
+ * }
+ * ```
+ *
+ * ##### Request
+ *
+ * ```javascript
+ * const USER_URL = "/user/:userId";
+ * const USER_COMMENTS_URL = "/user/:userId/comments";
+ *
+ * export function fetchUser(httpClient, userId) {
+ *   return httpClient.get(USER_URL, {
+ *     pathParams: { userId }
+ *   });
+ * }
+ *
+ * export function fetchUserPosts(httpClient, userId, page, limit) {
+ *   return httpClient.get(USER_COMMENTS_URL, {
+ *     url: USER_URL,
+ *     pathParams: { userId },
+ *     queryParams: { page, limit }
+ *   });
+ * }
+ * ```
  */
 export class HttpClient {
   private readonly client: AxiosInstance;
