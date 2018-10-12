@@ -21,7 +21,7 @@
     "axios"
   ],
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=8.3.0"
   },
   "scripts": {
     "all": "yarn lint --fix && yarn dts && yarn cover -u && yarn build",
@@ -30,24 +30,24 @@
     "lint": "js-scripts lint",
     "test": "jest --watch",
     "cover": "jest --coverage",
-    "build": "yarn build:es && yarn build:cjs && yarn build:es2015 && yarn build:typings",
-    "build:es": "rollup -c ./config/rollup.es.js",
-    "build:cjs": "rollup -c ./config/rollup.cjs.js",
-    "build:es2015": "rollup -c ./config/rollup.es2015.js",
+    "build": "yarn build:bundle && yarn build:typings",
+    "build:bundle": "rollup -c ./config/rollup.config.js",
     "build:typings": "rimraf typings && tsc --project tsconfig.typings.json",
     "codecov": "codecov -f ./coverage/lcov.info"
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0",
     "axios": "^0.18.0",
-    "path-to-regexp": "^2.4.0",
-    "tslib": "^1.9.0"
+    "path-to-regexp": "^2.4.0"
   },
   "peerDependencies": {
     "rxjs": "^6.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
+    "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/preset-typescript": "^7.1.0",
     "@dc0de/eslint-config": "^0.4.4",
     "@dc0de/eslint-config-base": "^0.4.1",
     "@dc0de/eslint-config-node": "^0.4.4",
@@ -55,6 +55,7 @@
     "@types/jest": "^23.3.5",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
+    "babel-plugin-module-resolver": "^3.1.1",
     "codecov": "^3.1.0",
     "eslint": "^5.6.1",
     "eslint-config-airbnb-base": "^13.1.0",
@@ -66,9 +67,9 @@
     "prettier": "^1.14.3",
     "rimraf": "^2.6.2",
     "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-prettier": "^0.4.0",
-    "rollup-plugin-replace": "^2.1.0",
-    "rollup-plugin-typescript2": "^0.17.1",
     "rxjs": "^6.3.3",
     "source-map-support": "^0.5.9",
     "ts-jest": "^23.10.4",
