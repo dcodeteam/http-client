@@ -72,7 +72,6 @@
     "rollup-plugin-prettier": "^0.4.0",
     "rxjs": "^6.3.3",
     "source-map-support": "^0.5.9",
-    "ts-jest": "^23.10.4",
     "typescript": "^3.1.2",
     "typescript-eslint-parser": "^20.0.0"
   }
