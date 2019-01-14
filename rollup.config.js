@@ -50,7 +50,10 @@ function createConfig(target) {
           "@babel/preset-typescript"
         ],
         plugins: [
-          ["@babel/plugin-transform-runtime"],
+          [
+            "@babel/plugin-transform-runtime",
+            { useESModules: target !== "cjs" }
+          ],
 
           target === "es" && [
             "module-resolver",
