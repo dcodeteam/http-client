@@ -1,18 +1,16 @@
 import { generatePath } from "../GeneratePath";
 
-describe("GeneratePath", () => {
-  describe("generatePath", () => {
-    test("empty 'urlPattern'", () => {
-      expect(generatePath("", undefined)).toBe("");
-    });
+test.each([
+  ["", undefined, "/"],
+  [null, undefined, "/"],
+  [undefined, undefined, "/"],
 
-    test("empty 'pathParams'", () => {
-      expect(generatePath("/foo", undefined)).toBe("/foo");
-    });
+  ["/hello", null, "/hello"],
+  ["/hello", undefined, "/hello"],
 
-    test("composition", () => {
-      expect(generatePath("/foo/:bar", { bar: "baz" })).toBe("/foo/baz");
-      expect(generatePath("/foo/:bar", { bar: "quoz" })).toBe("/foo/quoz");
-    });
-  });
+  ["/hello/:name", { name: "foo" }, "/hello/foo"],
+  ["/hello/:name", { name: "bar" }, "/hello/bar"],
+  ["/hello/:name", { name: "baz" }, "/hello/baz"],
+])("generatePath(%j, %j): %j", (urlPattern, urlParams, result) => {
+  expect(generatePath(urlPattern, urlParams)).toBe(result);
 });

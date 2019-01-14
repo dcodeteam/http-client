@@ -25,7 +25,11 @@ export function generatePath(
   urlPattern: string,
   urlParams: object | undefined,
 ): string {
-  if (!urlPattern || !urlParams) {
+  if (!urlPattern) {
+    return "/";
+  }
+
+  if (!urlParams) {
     return urlPattern;
   }
 
