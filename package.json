@@ -31,7 +31,7 @@
     "test": "jest --watch",
     "cover": "jest --coverage",
     "build": "yarn build:bundle && yarn build:typings",
-    "build:bundle": "rollup -c ./config/rollup.config.js",
+    "build:bundle": "rollup -c rollup.config.js",
     "build:typings": "rimraf typings && tsc --project tsconfig.typings.json",
     "codecov": "codecov -f ./coverage/lcov.info"
   },

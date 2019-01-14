@@ -1,3 +1,7 @@
 {
-  "root": true
+  "root": true,
+  "extends": "@dc0de/eslint-config-node",
+  "rules": {
+    "node/no-unpublished-require": "off"
+  }
 }

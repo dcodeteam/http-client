@@ -4,7 +4,7 @@ const babel = require("rollup-plugin-babel");
 const prettier = require("rollup-plugin-prettier");
 const nodeResolve = require("rollup-plugin-node-resolve");
 
-const pkg = require("../package");
+const pkg = require("./package");
 
 module.exports = [
   createConfig("es"),
@@ -26,13 +26,10 @@ function createConfig(target) {
       format: target === "cjs" ? "cjs" : "es"
     },
 
-    external(id) {
-      return (
-        externals.includes(id) ||
-        id.startsWith("rxjs") ||
-        id.startsWith("@babel/runtime")
-      );
-    },
+    external: id =>
+      externals.includes(id) ||
+      id.startsWith("rxjs") ||
+      id.startsWith("@babel/runtime"),
 
     plugins: [
       nodeResolve({ extensions: [".ts"] }),
@@ -64,6 +61,7 @@ function createConfig(target) {
               }
             }
           ],
+
           target === "es2015" && [
             "module-resolver",
             {
