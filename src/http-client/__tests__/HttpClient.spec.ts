@@ -2,444 +2,420 @@ import axios, { AxiosRequestConfig } from "axios";
 import { Observable } from "rxjs";
 
 import { HttpClientRequestConfig } from "../../interfaces/HttpClientRequestConfig";
-import { HttpClientRequestMethod } from "../../interfaces/HttpClientRequestMethod";
 import { isHttpClientError } from "../..";
 import { HttpClient } from "../HttpClient";
 
 jest.mock("axios");
 
-describe("HttpClient", () => {
-  const mockConfig: HttpClientRequestConfig = {
-    method: "GET",
+const mockConfig: HttpClientRequestConfig = {
+  method: "GET",
 
-    url: "/foo/:bar",
-    pathParams: { bar: "baz" },
-    queryParams: { foo: "bar" },
+  url: "/foo/:bar",
+  pathParams: { bar: "baz" },
+  queryParams: { foo: "bar" },
 
-    data: { foo: "bar" },
-    headers: { foo: "bar" },
+  data: { foo: "bar" },
+  headers: { foo: "bar" },
 
-    timeout: 1000,
-  };
+  timeout: 1000,
+};
 
-  const httpMethods: HttpClientRequestMethod[] = [
-    "GET",
-    "POST",
-    "PUT",
-    "PATCH",
-    "DELETE",
-  ];
+describe("HttpClient#request", () => {
+  it("returns observable", () => {
+    const client = new HttpClient();
 
-  describe("HttpClient#request", () => {
-    it("should return observable", () => {
+    expect(
+      client.request({ url: mockConfig.url, method: mockConfig.method }),
+    ).toBeInstanceOf(Observable);
+  });
+
+  it("creates new instance of axios client", () => {
+    const spy = jest.spyOn(axios, "create");
+
+    expect(spy).toBeCalledTimes(0);
+
+    expect(() => new HttpClient()).not.toThrow();
+
+    expect(spy).toBeCalledTimes(1);
+  });
+
+  it("calls 'axios.request'", async () => {
+    const instance = axios.create();
+
+    jest.spyOn(axios, "create").mockImplementationOnce(() => instance);
+
+    const spy = jest.spyOn(instance, "request");
+
+    const client = new HttpClient();
+
+    await expect(
+      client
+        .request({ url: mockConfig.url, method: mockConfig.method })
+        .toPromise(),
+    ).resolves.toMatchInlineSnapshot(`
+Object {
+  "data": Object {
+    "cancelToken": Object {},
+    "data": undefined,
+    "headers": Object {},
+    "method": "GET",
+    "params": Object {},
+    "url": "/foo/:bar",
+  },
+  "headers": undefined,
+  "status": undefined,
+}
+`);
+
+    expect(spy).toBeCalledTimes(1);
+  });
+
+  it.each([["GET"], ["POST"], ["PUT"], ["PATCH"], ["DELETE"]])(
+    "requests with method '%s'",
+    async method => {
       const client = new HttpClient();
 
-      expect(
-        client.request({ url: mockConfig.url, method: mockConfig.method }),
-      ).toBeInstanceOf(Observable);
-    });
-
-    it("should create new instance of axios client", () => {
-      const spy = jest.spyOn(axios, "create");
-
-      expect(spy).toHaveBeenCalledTimes(0);
-
-      expect(() => new HttpClient()).not.toThrow();
-
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call 'axios.request'", async () => {
-      const instance = axios.create();
-
-      jest.spyOn(axios, "create").mockImplementationOnce(() => instance);
-
-      const spy = jest.spyOn(instance, "request");
-
-      const client = new HttpClient();
-      const request = client.request({
-        url: mockConfig.url,
-        method: mockConfig.method,
-      });
-
-      await expect(request.toPromise()).resolves.toMatchSnapshot();
-
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    it("should accept 'method'", async () => {
-      const client = new HttpClient();
-
-      await Promise.all(
-        httpMethods.map(async method => {
-          const request = client.request<AxiosRequestConfig>({
+      await expect(
+        client
+          .request<AxiosRequestConfig>({
             method,
             url: mockConfig.url,
-          });
+          })
+          .toPromise()
+          .then(x => x.data.method),
+      ).resolves.toBe(method);
+    },
+  );
 
-          const response = await request.toPromise();
+  it.each([["/foo"], ["/bar"], ["/baz"]])("requests '%s'", async url => {
+    const client = new HttpClient();
 
-          expect(response.data.method).toBe(method);
-        }),
-      );
-    });
+    await expect(
+      client
+        .request<AxiosRequestConfig>({ url, method: mockConfig.method })
+        .toPromise()
+        .then(x => x.data.url),
+    ).resolves.toBe(url);
+  });
 
-    it("should accept 'url'", async () => {
+  it.each([
+    ["/hello/:name", { name: "foo" }, "/hello/foo"],
+    ["/hello/:name", { name: "bar" }, "/hello/bar"],
+    ["/hello/:name", { name: "baz" }, "/hello/baz"],
+  ])("requests '%s' with '%j' path params", async (url, pathParams, result) => {
+    const client = new HttpClient();
+
+    await expect(
+      client
+        .request<AxiosRequestConfig>({
+          url,
+          pathParams,
+          method: mockConfig.method,
+        })
+        .toPromise()
+        .then(x => x.data.url),
+    ).resolves.toBe(result);
+  });
+
+  it.each([
+    ["/hello", { name: "foo" }, "/hello?name=foo"],
+    ["/hello", { name: "bar" }, "/hello?name=bar"],
+    ["/hello", { name: "baz" }, "/hello?name=baz"],
+  ])("requests '%s' with '%j' query params", async (url, queryParams) => {
+    const client = new HttpClient();
+
+    await expect(
+      client
+        .request<AxiosRequestConfig>({
+          url,
+          queryParams,
+          method: mockConfig.method,
+        })
+        .toPromise()
+        .then(x => x.data.params),
+    ).resolves.toEqual(queryParams);
+  });
+
+  it.each([[{ name: "foo" }], [{ name: "bar" }], [{ name: "baz" }]])(
+    "requests with '%j' data",
+    async data => {
       const client = new HttpClient();
 
-      const urls = ["/foo", "/bar", "/baz"];
-
-      await Promise.all(
-        urls.map(async url => {
-          const request = client.request<AxiosRequestConfig>({
-            url,
-            method: mockConfig.method,
-          });
-
-          const response = await request.toPromise();
-
-          expect(response.data.url).toBe(url);
-        }),
-      );
-    });
-
-    it("should accept 'pathParams'", async () => {
-      const client = new HttpClient();
-
-      const pathParams = ["foo", "bar", "baz"];
-
-      await Promise.all(
-        pathParams.map(async param => {
-          const request = client.request<AxiosRequestConfig>({
-            url: "/hello/:name",
-            method: mockConfig.method,
-            pathParams: { name: param },
-          });
-
-          const response = await request.toPromise();
-
-          expect(response.data.url).toBe(`/hello/${param}`);
-        }),
-      );
-    });
-
-    it("should clone 'queryParams'", async () => {
-      const client = new HttpClient();
-
-      const queryList = [{ foo: "bar" }, { foo: "baz" }, { foo: "quoz" }];
-
-      await Promise.all(
-        queryList.map(async queryParams => {
-          const request = client.request<AxiosRequestConfig>({
-            queryParams,
-            url: mockConfig.url,
-            method: mockConfig.method,
-          });
-
-          const response = await request.toPromise();
-
-          expect(response.data.params).toEqual(queryParams);
-          expect(response.data.params).not.toBe(queryParams);
-        }),
-      );
-    });
-
-    it("should accept 'data'", async () => {
-      const client = new HttpClient();
-
-      const dataList = [{}, {}, {}];
-
-      await Promise.all(
-        dataList.map(async data => {
-          const request = client.request<AxiosRequestConfig>({
+      await expect(
+        client
+          .request<AxiosRequestConfig>({
             data,
-            url: mockConfig.url,
+            url: "/",
             method: mockConfig.method,
-          });
+          })
+          .toPromise()
+          .then(x => x.data.data),
+      ).resolves.toEqual(data);
+    },
+  );
 
-          const response = await request.toPromise();
-
-          expect(response.data.data).toBe(data);
-        }),
-      );
-    });
-
-    it("should clone 'headers'", async () => {
+  it.each([[{ name: "foo" }], [{ name: "bar" }], [{ name: "baz" }]])(
+    "requests with '%j' header",
+    async headers => {
       const client = new HttpClient();
 
-      const headerList = [{ foo: "bar" }, { foo: "baz" }, { foo: "quoz" }];
-
-      await Promise.all(
-        headerList.map(async headers => {
-          const request = client.request<AxiosRequestConfig>({
+      await expect(
+        client
+          .request<AxiosRequestConfig>({
             headers,
-            url: mockConfig.url,
+            url: "/",
             method: mockConfig.method,
-          });
+          })
+          .toPromise()
+          .then(x => x.data.headers),
+      ).resolves.toEqual(headers);
+    },
+  );
 
-          const response = await request.toPromise();
+  it.each([[-100], [0], [100]])("requests '%s' timeout", async timeout => {
+    const client = new HttpClient();
 
-          expect(response.data.headers).toEqual(headers);
-          expect(response.data.headers).not.toBe(headers);
-        }),
-      );
-    });
+    await expect(
+      client
+        .request<AxiosRequestConfig>({
+          timeout,
+          url: "/",
+          method: mockConfig.method,
+        })
+        .toPromise()
+        .then(x => x.data.timeout),
+    ).resolves.toEqual(timeout);
+  });
 
-    it("should accept 'timeout'", async () => {
+  it.each([[NaN], [Infinity], [undefined]])(
+    "requests without timeout if it's value is '%s'",
+    async timeout => {
       const client = new HttpClient();
 
-      const timeouts = [-100, 0, 100];
-
-      await Promise.all(
-        timeouts.map(async timeout => {
-          const request = client.request<AxiosRequestConfig>({
+      await expect(
+        client
+          .request<AxiosRequestConfig>({
             timeout,
-            url: mockConfig.url,
+            url: "/",
             method: mockConfig.method,
-          });
+          })
+          .toPromise()
+          .then(x => x.data.timeout),
+      ).resolves.toBeUndefined();
+    },
+  );
 
-          const response = await request.toPromise();
+  it("cancels request on observable close", () => {
+    const token = axios.CancelToken.source();
+    const spy = jest.spyOn(token, "cancel");
 
-          expect(response.data.timeout).toBe(timeout);
-        }),
-      );
+    jest.spyOn(axios.CancelToken, "source").mockImplementationOnce(() => token);
+
+    const client = new HttpClient();
+    const request = client.request({
+      url: "cancel",
+      method: mockConfig.method,
     });
 
-    it("should unset 'timeout' if it is not finite", async () => {
-      const client = new HttpClient();
-      const invalidValues = [undefined, Infinity, NaN];
+    const subscriber = request.subscribe();
 
-      await Promise.all(
-        invalidValues.map(async timeout => {
-          const request = client.request<AxiosRequestConfig>({
-            timeout,
-            url: mockConfig.url,
-            method: mockConfig.method,
-          });
+    expect(spy).toBeCalledTimes(0);
 
-          const response = await request.toPromise();
+    subscriber.unsubscribe();
 
-          expect(response.data.timeout).toBeUndefined();
-        }),
-      );
-    });
+    expect(spy).toBeCalledTimes(1);
 
-    it("should cancel request on observable close", () => {
-      const token = axios.CancelToken.source();
-      const spy = jest.spyOn(token, "cancel");
+    spy.mockRestore();
+  });
 
-      jest
-        .spyOn(axios.CancelToken, "source")
-        .mockImplementationOnce(() => token);
-
-      const client = new HttpClient();
-      const request = client.request({
-        url: "cancel",
-        method: mockConfig.method,
-      });
-
-      const subscriber = request.subscribe();
-
-      expect(spy).toHaveBeenCalledTimes(0);
-
-      subscriber.unsubscribe();
-
-      expect(spy).toHaveBeenCalledTimes(1);
-
-      spy.mockRestore();
-    });
-
-    it("should throw HttpClientError on http errors", async () => {
-      const client = new HttpClient();
-      const request = client.request({
+  it("throws HttpClientError on http errors", async () => {
+    const client = new HttpClient();
+    const request = client
+      .request({
         url: "error",
         method: mockConfig.method,
-      });
+      })
+      .toPromise();
 
-      try {
-        await request.toPromise();
-      } catch (e) {
-        expect(e).toMatchSnapshot();
-        expect(isHttpClientError(e)).toBe(true);
-      }
+    await expect(request).rejects.toMatchInlineSnapshot(
+      `[HttpClientError: Http Error]`,
+    );
+    await expect(request.catch(e => isHttpClientError(e))).resolves.toBe(true);
+  });
 
-      expect.assertions(2);
-    });
-
-    it("should throw Error on sync errors", async () => {
-      const client = new HttpClient();
-      const request = client.request({
+  it("throws Error on sync errors", async () => {
+    const client = new HttpClient();
+    const request = client
+      .request({
         url: "/foo/:bar",
         pathParams: {},
         method: mockConfig.method,
-      });
+      })
+      .toPromise();
 
-      try {
-        await request.toPromise();
-      } catch (e) {
-        expect(e).toMatchSnapshot();
-        expect(e).toBeInstanceOf(Error);
-        expect(isHttpClientError(e)).toBe(false);
-      }
-
-      expect.assertions(3);
-    });
-
-    it("should call 'requestInterceptor' before request", async () => {
-      const requestInterceptor = jest.fn();
-
-      const options = { url: mockConfig.url, method: mockConfig.method };
-      const client = new HttpClient({ requestInterceptor });
-      const request = client.request(options);
-
-      await request.toPromise();
-
-      expect(requestInterceptor).toHaveBeenCalledTimes(1);
-      expect(requestInterceptor).toBeCalledWith(options);
-    });
-
-    it("should call 'requestInterceptor' before request", async () => {
-      const requestInterceptor = jest.fn();
-
-      const config = {
-        url: mockConfig.url,
-        method: mockConfig.method,
-      };
-      const client = new HttpClient({ requestInterceptor });
-      const request = client.request(config);
-
-      await expect(request.toPromise()).resolves.toBeTruthy();
-
-      expect(requestInterceptor).toHaveBeenCalledTimes(1);
-      expect(requestInterceptor).toBeCalledWith(
-        expect.objectContaining(config),
-      );
-    });
-
-    it("should call 'responseInterceptor' before request", async () => {
-      const responseInterceptor = jest.fn();
-
-      const config = {
-        url: mockConfig.url,
-        method: mockConfig.method,
-      };
-      const client = new HttpClient({ responseInterceptor });
-      const request = client.request(config);
-
-      const response = await request.toPromise();
-
-      expect(responseInterceptor).toHaveBeenCalledTimes(1);
-      expect(responseInterceptor).toBeCalledWith(
-        expect.objectContaining(config),
-        response,
-      );
-    });
-
-    it("should call 'errorInterceptor' on errors", async () => {
-      const errorInterceptor = jest.fn();
-
-      const client = new HttpClient({ errorInterceptor });
-      const request = client.request({
-        url: "error",
-        method: mockConfig.method,
-      });
-
-      try {
-        await request.toPromise();
-      } catch (e) {
-        expect(e).toMatchSnapshot();
-        expect(errorInterceptor).lastCalledWith(e);
-        expect(errorInterceptor).toHaveBeenCalledTimes(1);
-      }
-
-      expect.assertions(3);
-    });
-
-    it("should call 'shouldRetry' on errors", async () => {
-      const shouldRetry = jest.fn(({ attempt }) => attempt < 3);
-
-      try {
-        const client = new HttpClient({ shouldRetry });
-        const request = client.request({
-          url: "error",
-          method: mockConfig.method,
-        });
-
-        await request.toPromise();
-      } catch (e) {
-        expect(e).toMatchSnapshot();
-        expect(shouldRetry).toHaveBeenCalledTimes(3);
-        expect(shouldRetry.mock.calls).toEqual([
-          [{ error: e, attempt: 1, config: e.config }],
-          [{ error: e, attempt: 2, config: e.config }],
-          [{ error: e, attempt: 3, config: e.config }],
-        ]);
-      }
-
-      expect.assertions(3);
-    });
+    await expect(request).rejects.toMatchInlineSnapshot(
+      `[TypeError: Expected "bar" to be a string]`,
+    );
+    await expect(request.catch(e => isHttpClientError(e))).resolves.toBe(false);
   });
 
-  httpMethods.forEach(x => {
-    const method = x.toLowerCase();
+  it("calls 'requestInterceptor' before request", async () => {
+    const requestInterceptor = jest.fn();
 
-    describe(`HttpClient#${method}`, () => {
-      it("should call HttpClient#request", () => {
-        const client = new HttpClient();
-        const spy = jest.spyOn(client, "request");
+    const options = { url: mockConfig.url, method: mockConfig.method };
+    const client = new HttpClient({ requestInterceptor });
+    const request = client.request(options);
 
-        if (x === "GET") {
-          expect(
-            client.get(mockConfig.url, {
-              timeout: mockConfig.timeout,
-              headers: mockConfig.headers,
-              pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams,
-            }),
-          ).toBeInstanceOf(Observable);
-        } else if (x === "POST") {
-          expect(
-            client.post(mockConfig.url, {
-              data: mockConfig.data,
-              timeout: mockConfig.timeout,
-              headers: mockConfig.headers,
-              pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams,
-            }),
-          ).toBeInstanceOf(Observable);
-        } else if (x === "PUT") {
-          expect(
-            client.put(mockConfig.url, {
-              data: mockConfig.data,
-              timeout: mockConfig.timeout,
-              headers: mockConfig.headers,
-              pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams,
-            }),
-          ).toBeInstanceOf(Observable);
-        } else if (x === "PATCH") {
-          expect(
-            client.patch(mockConfig.url, {
-              data: mockConfig.data,
-              timeout: mockConfig.timeout,
-              headers: mockConfig.headers,
-              pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams,
-            }),
-          ).toBeInstanceOf(Observable);
-        } else if (x === "DELETE") {
-          expect(
-            client.delete(mockConfig.url, {
-              timeout: mockConfig.timeout,
-              headers: mockConfig.headers,
-              pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams,
-            }),
-          ).toBeInstanceOf(Observable);
-        }
+    await request.toPromise();
 
-        expect(spy).toHaveBeenCalledTimes(1);
-      });
+    expect(requestInterceptor).toBeCalledTimes(1);
+    expect(requestInterceptor).toBeCalledWith(options);
+  });
+
+  it("calls 'requestInterceptor' before request", async () => {
+    const requestInterceptor = jest.fn();
+
+    const config = {
+      url: mockConfig.url,
+      method: mockConfig.method,
+    };
+    const client = new HttpClient({ requestInterceptor });
+    const request = client.request(config);
+
+    await expect(request.toPromise()).resolves.toBeTruthy();
+
+    expect(requestInterceptor).toBeCalledTimes(1);
+    expect(requestInterceptor).toBeCalledWith(expect.objectContaining(config));
+  });
+
+  it("calls 'responseInterceptor' before request", async () => {
+    const responseInterceptor = jest.fn();
+
+    const config = {
+      url: mockConfig.url,
+      method: mockConfig.method,
+    };
+    const client = new HttpClient({ responseInterceptor });
+    const request = client.request(config);
+
+    const response = await request.toPromise();
+
+    expect(responseInterceptor).toBeCalledTimes(1);
+    expect(responseInterceptor).toBeCalledWith(
+      expect.objectContaining(config),
+      response,
+    );
+  });
+
+  it("calls 'errorInterceptor' on errors", async () => {
+    const errorInterceptor = jest.fn();
+
+    const client = new HttpClient({ errorInterceptor });
+    const request = client
+      .request({
+        url: "error",
+        method: mockConfig.method,
+      })
+      .toPromise();
+
+    await expect(request).rejects.toMatchInlineSnapshot(
+      `[HttpClientError: Http Error]`,
+    );
+
+    const error = await request.catch(e => e);
+
+    expect(errorInterceptor).lastCalledWith(error);
+    expect(errorInterceptor).toBeCalledTimes(1);
+  });
+
+  it("calls 'shouldRetry' on errors", async () => {
+    const shouldRetry = jest.fn(({ attempt }) => attempt < 3);
+
+    const client = new HttpClient({ shouldRetry });
+    const request = client
+      .request({
+        url: "error",
+        method: mockConfig.method,
+      })
+      .toPromise();
+
+    await expect(request).rejects.toMatchInlineSnapshot(
+      `[HttpClientError: Http Error]`,
+    );
+
+    const error = await request.catch(e => e);
+
+    expect(shouldRetry).toBeCalledTimes(3);
+    expect(shouldRetry.mock.calls).toEqual([
+      [{ error, attempt: 1, config: error.config }],
+      [{ error, attempt: 2, config: error.config }],
+      [{ error, attempt: 3, config: error.config }],
+    ]);
+  });
+});
+
+describe.each([
+  [
+    "get",
+    {
+      timeout: mockConfig.timeout,
+      headers: mockConfig.headers,
+      pathParams: mockConfig.pathParams,
+      queryParams: mockConfig.queryParams,
+    },
+  ],
+  [
+    "post",
+    {
+      data: mockConfig.data,
+      timeout: mockConfig.timeout,
+      headers: mockConfig.headers,
+      pathParams: mockConfig.pathParams,
+      queryParams: mockConfig.queryParams,
+    },
+  ],
+  [
+    "put",
+    {
+      data: mockConfig.data,
+      timeout: mockConfig.timeout,
+      headers: mockConfig.headers,
+      pathParams: mockConfig.pathParams,
+      queryParams: mockConfig.queryParams,
+    },
+  ],
+  [
+    "patch",
+    {
+      data: mockConfig.data,
+      timeout: mockConfig.timeout,
+      headers: mockConfig.headers,
+      pathParams: mockConfig.pathParams,
+      queryParams: mockConfig.queryParams,
+    },
+  ],
+  [
+    "delete",
+    {
+      timeout: mockConfig.timeout,
+      headers: mockConfig.headers,
+      pathParams: mockConfig.pathParams,
+      queryParams: mockConfig.queryParams,
+    },
+  ],
+])("HttpClient#%s", (method: "get", options) => {
+  it("calls HttpClient#request", () => {
+    const client = new HttpClient();
+    const spy = jest.spyOn(client, "request");
+
+    expect(client[method](mockConfig.url, options)).toBeInstanceOf(Observable);
+
+    expect(spy).toBeCalledTimes(1);
+
+    expect(spy.mock.calls[0][0]).toEqual({
+      ...options,
+      url: mockConfig.url,
+      method: method.toUpperCase(),
     });
   });
 });
