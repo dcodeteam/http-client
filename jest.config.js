@@ -2,11 +2,16 @@
 
 module.exports = {
   testEnvironment: "node",
-  setupFiles: ["<rootDir>/config/jest.js"],
+  setupFiles: ["<rootDir>/src/__testutils___/setupTests.ts"],
   transform: { "^.+\\.(ts|tsx)$": "babel-jest" },
   testMatch: ["**/*.spec.ts?(x)"],
+
   moduleFileExtensions: ["ts", "js"],
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/__tests__/**/*.ts"],
+  coveragePathIgnorePatterns: [
+    "/__mocks__/",
+    "/__tests__/",
+    "/__testutils___/"
+  ],
   coverageThreshold: {
     global: { branches: 95, functions: 95, lines: 95, statements: 95 }
   }
