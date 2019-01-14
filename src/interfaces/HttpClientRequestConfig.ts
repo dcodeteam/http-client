@@ -1,6 +1,6 @@
 import { HttpClientRequestMethod } from "./HttpClientRequestMethod";
 
-// eslint-disable-next-line typescript/no-explicit-any
+// eslint-disable-next-line typescript/no-explicit-any,typescript/no-type-alias
 type AnyObject = { [key: string]: any };
 
 export interface HttpClientFetchRequestConfig {
