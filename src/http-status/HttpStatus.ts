@@ -16,5 +16,5 @@ export enum HttpStatus {
   InsufficientStorage = 507,
   LoopDetected = 508,
   NotExtended = 510,
-  NetworkAuthenticationRequired = 511
+  NetworkAuthenticationRequired = 511,
 }

@@ -6,7 +6,7 @@ import { HttpClientError } from "../interfaces/HttpClientError";
 import {
   HttpClientFetchRequestConfig,
   HttpClientRequestConfig,
-  HttpClientUpdateRequestConfig
+  HttpClientUpdateRequestConfig,
 } from "../interfaces/HttpClientRequestConfig";
 import { HttpClientResponse } from "../interfaces/HttpClientResponse";
 import { generatePath } from "../utils/GeneratePath";
@@ -22,14 +22,14 @@ export interface HttpClientOptions {
       attempt: number;
       error: Error | HttpClientError;
       config: HttpClientRequestConfig;
-    }
+    },
   ) => boolean;
 
   readonly errorInterceptor?: (error: Error | HttpClientError) => void;
   readonly requestInterceptor?: (config: HttpClientRequestConfig) => void;
   readonly responseInterceptor?: (
     config: HttpClientRequestConfig,
-    response: HttpClientResponse
+    response: HttpClientResponse,
   ) => void;
 }
 
@@ -87,47 +87,47 @@ export class HttpClient {
 
   public get<T>(
     url: string,
-    options?: HttpClientFetchRequestConfig
+    options?: HttpClientFetchRequestConfig,
   ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "GET" });
   }
 
   public post<T>(
     url: string,
-    options?: HttpClientUpdateRequestConfig
+    options?: HttpClientUpdateRequestConfig,
   ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "POST" });
   }
 
   public put<T>(
     url: string,
-    options?: HttpClientUpdateRequestConfig
+    options?: HttpClientUpdateRequestConfig,
   ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "PUT" });
   }
 
   public patch<T>(
     url: string,
-    options?: HttpClientUpdateRequestConfig
+    options?: HttpClientUpdateRequestConfig,
   ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "PATCH" });
   }
 
   public delete<T>(
     url: string,
-    options?: HttpClientFetchRequestConfig
+    options?: HttpClientFetchRequestConfig,
   ): Observable<HttpClientResponse<T>> {
     return this.request<T>({ ...options, url, method: "DELETE" });
   }
 
   public request<T>(
-    options: HttpClientRequestConfig
+    options: HttpClientRequestConfig,
   ): Observable<HttpClientResponse<T>> {
     const {
       shouldRetry,
       errorInterceptor,
       requestInterceptor,
-      responseInterceptor
+      responseInterceptor,
     } = this.options;
 
     const stream = new Observable<HttpClientResponse<T>>(subscriber => {
@@ -144,7 +144,7 @@ export class HttpClient {
         data: options.data,
         headers: { ...options.headers },
         timeout: options.timeout,
-        cancelToken: cancelTokenSource.token
+        cancelToken: cancelTokenSource.token,
       };
 
       // Fix for react-native in Android devices.
@@ -160,7 +160,7 @@ export class HttpClient {
           const response: HttpClientResponse<T> = {
             data: x.data,
             status: x.status,
-            headers: x.headers
+            headers: x.headers,
           };
 
           if (responseInterceptor) {
@@ -180,7 +180,7 @@ export class HttpClient {
                 code: x.code,
                 config: options,
                 message: x.message,
-                response: x.response
+                response: x.response,
               });
 
           if (errorInterceptor) {
@@ -213,9 +213,9 @@ export class HttpClient {
                 }
 
                 throw error;
-              }, 1)
-            )
-          )
+              }, 1),
+            ),
+          ),
         );
   }
 }

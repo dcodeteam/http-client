@@ -23,6 +23,6 @@ export default {
         } else {
           resolve({ data: config });
         }
-      })
-  })
+      }),
+  }),
 };

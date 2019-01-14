@@ -19,7 +19,7 @@ describe("HttpClient", () => {
     data: { foo: "bar" },
     headers: { foo: "bar" },
 
-    timeout: 1000
+    timeout: 1000,
   };
 
   const httpMethods: HttpClientRequestMethod[] = [
@@ -27,7 +27,7 @@ describe("HttpClient", () => {
     "POST",
     "PUT",
     "PATCH",
-    "DELETE"
+    "DELETE",
   ];
 
   describe("HttpClient#request", () => {
@@ -35,7 +35,7 @@ describe("HttpClient", () => {
       const client = new HttpClient();
 
       expect(
-        client.request({ url: mockConfig.url, method: mockConfig.method })
+        client.request({ url: mockConfig.url, method: mockConfig.method }),
       ).toBeInstanceOf(Observable);
     });
 
@@ -59,7 +59,7 @@ describe("HttpClient", () => {
       const client = new HttpClient();
       const request = client.request({
         url: mockConfig.url,
-        method: mockConfig.method
+        method: mockConfig.method,
       });
 
       await expect(request.toPromise()).resolves.toMatchSnapshot();
@@ -74,13 +74,13 @@ describe("HttpClient", () => {
         httpMethods.map(async method => {
           const request = client.request<AxiosRequestConfig>({
             method,
-            url: mockConfig.url
+            url: mockConfig.url,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.method).toBe(method);
-        })
+        }),
       );
     });
 
@@ -93,13 +93,13 @@ describe("HttpClient", () => {
         urls.map(async url => {
           const request = client.request<AxiosRequestConfig>({
             url,
-            method: mockConfig.method
+            method: mockConfig.method,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.url).toBe(url);
-        })
+        }),
       );
     });
 
@@ -113,13 +113,13 @@ describe("HttpClient", () => {
           const request = client.request<AxiosRequestConfig>({
             url: "/hello/:name",
             method: mockConfig.method,
-            pathParams: { name: param }
+            pathParams: { name: param },
           });
 
           const response = await request.toPromise();
 
           expect(response.data.url).toBe(`/hello/${param}`);
-        })
+        }),
       );
     });
 
@@ -133,14 +133,14 @@ describe("HttpClient", () => {
           const request = client.request<AxiosRequestConfig>({
             queryParams,
             url: mockConfig.url,
-            method: mockConfig.method
+            method: mockConfig.method,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.params).toEqual(queryParams);
           expect(response.data.params).not.toBe(queryParams);
-        })
+        }),
       );
     });
 
@@ -154,13 +154,13 @@ describe("HttpClient", () => {
           const request = client.request<AxiosRequestConfig>({
             data,
             url: mockConfig.url,
-            method: mockConfig.method
+            method: mockConfig.method,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.data).toBe(data);
-        })
+        }),
       );
     });
 
@@ -174,14 +174,14 @@ describe("HttpClient", () => {
           const request = client.request<AxiosRequestConfig>({
             headers,
             url: mockConfig.url,
-            method: mockConfig.method
+            method: mockConfig.method,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.headers).toEqual(headers);
           expect(response.data.headers).not.toBe(headers);
-        })
+        }),
       );
     });
 
@@ -195,13 +195,13 @@ describe("HttpClient", () => {
           const request = client.request<AxiosRequestConfig>({
             timeout,
             url: mockConfig.url,
-            method: mockConfig.method
+            method: mockConfig.method,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.timeout).toBe(timeout);
-        })
+        }),
       );
     });
 
@@ -214,13 +214,13 @@ describe("HttpClient", () => {
           const request = client.request<AxiosRequestConfig>({
             timeout,
             url: mockConfig.url,
-            method: mockConfig.method
+            method: mockConfig.method,
           });
 
           const response = await request.toPromise();
 
           expect(response.data.timeout).toBeUndefined();
-        })
+        }),
       );
     });
 
@@ -235,7 +235,7 @@ describe("HttpClient", () => {
       const client = new HttpClient();
       const request = client.request({
         url: "cancel",
-        method: mockConfig.method
+        method: mockConfig.method,
       });
 
       const subscriber = request.subscribe();
@@ -253,7 +253,7 @@ describe("HttpClient", () => {
       const client = new HttpClient();
       const request = client.request({
         url: "error",
-        method: mockConfig.method
+        method: mockConfig.method,
       });
 
       try {
@@ -271,7 +271,7 @@ describe("HttpClient", () => {
       const request = client.request({
         url: "/foo/:bar",
         pathParams: {},
-        method: mockConfig.method
+        method: mockConfig.method,
       });
 
       try {
@@ -303,7 +303,7 @@ describe("HttpClient", () => {
 
       const config = {
         url: mockConfig.url,
-        method: mockConfig.method
+        method: mockConfig.method,
       };
       const client = new HttpClient({ requestInterceptor });
       const request = client.request(config);
@@ -312,7 +312,7 @@ describe("HttpClient", () => {
 
       expect(requestInterceptor).toHaveBeenCalledTimes(1);
       expect(requestInterceptor).toBeCalledWith(
-        expect.objectContaining(config)
+        expect.objectContaining(config),
       );
     });
 
@@ -321,7 +321,7 @@ describe("HttpClient", () => {
 
       const config = {
         url: mockConfig.url,
-        method: mockConfig.method
+        method: mockConfig.method,
       };
       const client = new HttpClient({ responseInterceptor });
       const request = client.request(config);
@@ -331,7 +331,7 @@ describe("HttpClient", () => {
       expect(responseInterceptor).toHaveBeenCalledTimes(1);
       expect(responseInterceptor).toBeCalledWith(
         expect.objectContaining(config),
-        response
+        response,
       );
     });
 
@@ -341,7 +341,7 @@ describe("HttpClient", () => {
       const client = new HttpClient({ errorInterceptor });
       const request = client.request({
         url: "error",
-        method: mockConfig.method
+        method: mockConfig.method,
       });
 
       try {
@@ -362,7 +362,7 @@ describe("HttpClient", () => {
         const client = new HttpClient({ shouldRetry });
         const request = client.request({
           url: "error",
-          method: mockConfig.method
+          method: mockConfig.method,
         });
 
         await request.toPromise();
@@ -372,7 +372,7 @@ describe("HttpClient", () => {
         expect(shouldRetry.mock.calls).toEqual([
           [{ error: e, attempt: 1, config: e.config }],
           [{ error: e, attempt: 2, config: e.config }],
-          [{ error: e, attempt: 3, config: e.config }]
+          [{ error: e, attempt: 3, config: e.config }],
         ]);
       }
 
@@ -394,8 +394,8 @@ describe("HttpClient", () => {
               timeout: mockConfig.timeout,
               headers: mockConfig.headers,
               pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams
-            })
+              queryParams: mockConfig.queryParams,
+            }),
           ).toBeInstanceOf(Observable);
         } else if (x === "POST") {
           expect(
@@ -404,8 +404,8 @@ describe("HttpClient", () => {
               timeout: mockConfig.timeout,
               headers: mockConfig.headers,
               pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams
-            })
+              queryParams: mockConfig.queryParams,
+            }),
           ).toBeInstanceOf(Observable);
         } else if (x === "PUT") {
           expect(
@@ -414,8 +414,8 @@ describe("HttpClient", () => {
               timeout: mockConfig.timeout,
               headers: mockConfig.headers,
               pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams
-            })
+              queryParams: mockConfig.queryParams,
+            }),
           ).toBeInstanceOf(Observable);
         } else if (x === "PATCH") {
           expect(
@@ -424,8 +424,8 @@ describe("HttpClient", () => {
               timeout: mockConfig.timeout,
               headers: mockConfig.headers,
               pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams
-            })
+              queryParams: mockConfig.queryParams,
+            }),
           ).toBeInstanceOf(Observable);
         } else if (x === "DELETE") {
           expect(
@@ -433,8 +433,8 @@ describe("HttpClient", () => {
               timeout: mockConfig.timeout,
               headers: mockConfig.headers,
               pathParams: mockConfig.pathParams,
-              queryParams: mockConfig.queryParams
-            })
+              queryParams: mockConfig.queryParams,
+            }),
           ).toBeInstanceOf(Observable);
         }
 

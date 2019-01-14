@@ -23,7 +23,7 @@ function compileGenerator(urlPattern: string): PathFunction {
 
 export function generatePath(
   urlPattern: string,
-  urlParams: object | undefined
+  urlParams: object | undefined,
 ): string {
   if (!urlPattern || !urlParams) {
     return urlPattern;

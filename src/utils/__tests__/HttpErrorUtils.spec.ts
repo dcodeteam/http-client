@@ -7,7 +7,7 @@ import {
   getHttpClientErrorStatus,
   isHttpClientError,
   isHttpClientResponseError,
-  isHttpClientTimeoutError
+  isHttpClientTimeoutError,
 } from "../HttpErrorUtils";
 
 function mockConfig(): HttpClientRequestConfig {
@@ -28,7 +28,7 @@ describe("HttpErrorUtils", () => {
         config,
         response,
         code: "foo",
-        message: "Bar"
+        message: "Bar",
       });
 
       expect(error).toBeInstanceOf(Error);
@@ -48,9 +48,9 @@ describe("HttpErrorUtils", () => {
         isHttpClientError(
           createHttpClientError({
             message: "Foo",
-            config: mockConfig()
-          })
-        )
+            config: mockConfig(),
+          }),
+        ),
       ).toBe(true);
     });
   });
@@ -64,9 +64,9 @@ describe("HttpErrorUtils", () => {
         isHttpClientResponseError(
           createHttpClientError({
             message: "Foo",
-            config: mockConfig()
-          })
-        )
+            config: mockConfig(),
+          }),
+        ),
       ).toBe(false);
 
       expect(
@@ -74,9 +74,9 @@ describe("HttpErrorUtils", () => {
           createHttpClientError({
             message: "Foo",
             config: mockConfig(),
-            response: mockResponse()
-          })
-        )
+            response: mockResponse(),
+          }),
+        ),
       ).toBe(true);
     });
   });
@@ -90,9 +90,9 @@ describe("HttpErrorUtils", () => {
         getHttpClientErrorStatus(
           createHttpClientError({
             message: "Foo",
-            config: mockConfig()
-          })
-        )
+            config: mockConfig(),
+          }),
+        ),
       ).toBeUndefined();
 
       const response = mockResponse();
@@ -102,9 +102,9 @@ describe("HttpErrorUtils", () => {
           createHttpClientError({
             response,
             message: "Foo",
-            config: mockConfig()
-          })
-        )
+            config: mockConfig(),
+          }),
+        ),
       ).toBe(response.status);
     });
   });
@@ -118,9 +118,9 @@ describe("HttpErrorUtils", () => {
         isHttpClientTimeoutError(
           createHttpClientError({
             message: "Foo",
-            config: mockConfig()
-          })
-        )
+            config: mockConfig(),
+          }),
+        ),
       ).toBe(false);
 
       expect(
@@ -128,9 +128,9 @@ describe("HttpErrorUtils", () => {
           createHttpClientError({
             message: "Foo",
             config: mockConfig(),
-            response: mockResponse()
-          })
-        )
+            response: mockResponse(),
+          }),
+        ),
       ).toBe(false);
 
       expect(
@@ -139,9 +139,9 @@ describe("HttpErrorUtils", () => {
             code: HTTP_ERROR_TIMEOUT_CODE,
 
             message: "Foo",
-            config: mockConfig()
-          })
-        )
+            config: mockConfig(),
+          }),
+        ),
       ).toBe(true);
 
       expect(
@@ -152,10 +152,10 @@ describe("HttpErrorUtils", () => {
             response: {
               data: "",
               headers: {},
-              status: HttpStatus.GatewayTimeout
-            }
-          })
-        )
+              status: HttpStatus.GatewayTimeout,
+            },
+          }),
+        ),
       ).toBe(true);
     });
   });

@@ -34,7 +34,7 @@ import {
   HttpStatus,
   isHttpClientError,
   getHttpClientErrorStatus,
-  isHttpClientTimeoutError
+  isHttpClientTimeoutError,
 } from "@dc0de/http-client";
 
 export function createHttpClient(logger, getToken, unauthorize) {
@@ -45,7 +45,7 @@ export function createHttpClient(logger, getToken, unauthorize) {
       config.headers = {
         ...config.headers,
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       };
 
       // Set authorization header.
@@ -101,7 +101,7 @@ export function createHttpClient(logger, getToken, unauthorize) {
       }
 
       return false;
-    }
+    },
   });
 }
 ```
@@ -114,7 +114,7 @@ const USER_COMMENTS_URL = "/user/:userId/comments";
 
 export function fetchUser(httpClient, userId) {
   return httpClient.get(USER_URL, {
-    pathParams: { userId }
+    pathParams: { userId },
   });
 }
 
@@ -122,7 +122,7 @@ export function fetchUserPosts(httpClient, userId, page, limit) {
   return httpClient.get(USER_COMMENTS_URL, {
     url: USER_URL,
     pathParams: { userId },
-    queryParams: { page, limit }
+    queryParams: { page, limit },
   });
 }
 ```

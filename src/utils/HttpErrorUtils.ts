@@ -17,7 +17,7 @@ export function createHttpClientError(options: {
 
     code: options.code,
     config: options.config,
-    response: options.response
+    response: options.response,
   });
 }
 
@@ -32,13 +32,13 @@ export function getHttpClientErrorStatus(error: object): number | undefined {
 }
 
 export function isHttpClientResponseError(
-  error: object
+  error: object,
 ): error is HttpClientError {
   return isHttpClientError(error) && error.response != null;
 }
 
 export function isHttpClientTimeoutError(
-  error: object
+  error: object,
 ): error is HttpClientError {
   return (
     isHttpClientError(error) &&

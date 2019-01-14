@@ -8,13 +8,13 @@ const pkg = require("./package");
 module.exports = [
   createConfig("es"),
   createConfig("cjs"),
-  createConfig("es2015")
+  createConfig("es2015"),
 ];
 
 function createConfig(target) {
   const externals = [
     ...Object.keys(pkg.dependencies),
-    ...Object.keys(pkg.peerDependencies)
+    ...Object.keys(pkg.peerDependencies),
   ];
 
   return {
@@ -22,7 +22,7 @@ function createConfig(target) {
 
     output: {
       file: `./http-client.${target}.js`,
-      format: target === "cjs" ? "cjs" : "es"
+      format: target === "cjs" ? "cjs" : "es",
     },
 
     external: id =>
@@ -43,15 +43,15 @@ function createConfig(target) {
             {
               modules: false,
               forceAllTransforms: target !== "es2015",
-              targets: { esmodules: target === "es2015" }
-            }
+              targets: { esmodules: target === "es2015" },
+            },
           ],
-          "@babel/preset-typescript"
+          "@babel/preset-typescript",
         ],
         plugins: [
           [
             "@babel/plugin-transform-runtime",
-            { useESModules: target !== "cjs" }
+            { useESModules: target !== "cjs" },
           ],
 
           target === "es" && [
@@ -59,9 +59,9 @@ function createConfig(target) {
             {
               alias: {
                 rxjs: "rxjs/_esm5",
-                "rxjs/operators": "rxjs/_esm5/operators"
-              }
-            }
+                "rxjs/operators": "rxjs/_esm5/operators",
+              },
+            },
           ],
 
           target === "es2015" && [
@@ -69,12 +69,12 @@ function createConfig(target) {
             {
               alias: {
                 rxjs: "rxjs/_esm2015",
-                "rxjs/operators": "rxjs/_esm2015/operators"
-              }
-            }
-          ]
-        ].filter(Boolean)
-      })
-    ]
+                "rxjs/operators": "rxjs/_esm2015/operators",
+              },
+            },
+          ],
+        ].filter(Boolean),
+      }),
+    ],
   };
 }
