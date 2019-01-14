@@ -24,9 +24,8 @@
     "node": ">=8.3.0"
   },
   "scripts": {
-    "all": "yarn lint --fix && yarn dts && yarn cover -u && yarn build",
-    "ci": "yarn lint && yarn dts && yarn cover --ci && yarn build",
-    "dts": "tsc --noEmit",
+    "all": "yarn lint --fix && yarn tsc && yarn cover -u && yarn build",
+    "ci": "yarn lint && yarn tsc && yarn cover --ci && yarn build",
     "lint": "stylotron lint",
     "test": "jest --watch",
     "cover": "jest --coverage",

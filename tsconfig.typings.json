@@ -6,6 +6,7 @@
     "**/__testutils___/**/*.ts"
   ],
   "compilerOptions": {
+    "noEmit": false,
     "declaration": true,
     "declarationDir": "typings",
     "emitDeclarationOnly": true
