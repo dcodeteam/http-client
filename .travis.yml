@@ -30,7 +30,7 @@ deploy:
       tags: false
       node_js: "10"
       branch: master
-      repo: dcodeteam/react-google-maps
+      repo: dcodeteam/http-client
 
   - provider: npm
     skip_cleanup: true
